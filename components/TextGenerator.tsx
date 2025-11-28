@@ -393,7 +393,7 @@ export const TextGenerator: React.FC = () => {
       setTimeout(() => {
           setShowWarningToast(false);
           setWarningMsg('');
-      }, 3000);
+      }, 5000);
     } else {
       setIsEditSidebarOpen(false);
     }
