@@ -368,6 +368,7 @@ export const TextGenerator: React.FC = () => {
   const [showGenSuccessToast, setShowGenSuccessToast] = useState(false);
   const [showEditSuccessToast, setShowEditSuccessToast] = useState(false);
   const [showWarningToast, setShowWarningToast] = useState(false);
+  const [warningMsg, setWarningMsg] = useState('');
   const [showErrorToast, setShowErrorToast] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -385,17 +386,32 @@ export const TextGenerator: React.FC = () => {
     };
   }, [previewImage, isEditSidebarOpen, showClearDialog, showDeleteDialog]);
 
+  const attemptCloseSidebar = useCallback(() => {
+    if (isEditing) {
+      setWarningMsg(t('waitEditCompletion'));
+      setShowWarningToast(true);
+      setTimeout(() => {
+          setShowWarningToast(false);
+          setWarningMsg('');
+      }, 3000);
+    } else {
+      setIsEditSidebarOpen(false);
+    }
+  }, [isEditing, t]);
+
   // Handle ESC key to close sidebar/modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (isEditSidebarOpen) setIsEditSidebarOpen(false);
+        if (isEditSidebarOpen) {
+            attemptCloseSidebar();
+        }
         else if (previewImage) setPreviewImage(null);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isEditSidebarOpen, previewImage]);
+  }, [isEditSidebarOpen, previewImage, attemptCloseSidebar]);
 
   useEffect(() => {
     try {
@@ -710,7 +726,7 @@ export const TextGenerator: React.FC = () => {
                 {t('editTitle')}
             </h2>
             <button 
-                onClick={() => setIsEditSidebarOpen(false)}
+                onClick={attemptCloseSidebar}
                 className="p-4 hover:bg-zinc-800 rounded-full text-zinc-400 hover:text-white transition-colors"
                 aria-label="Close"
             >
@@ -757,7 +773,7 @@ export const TextGenerator: React.FC = () => {
       {isEditSidebarOpen && (
           <div 
             className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[190] animate-in fade-in duration-300"
-            onClick={() => setIsEditSidebarOpen(false)}
+            onClick={attemptCloseSidebar}
           />
       )}
 
@@ -794,7 +810,7 @@ export const TextGenerator: React.FC = () => {
         {showWarningToast && (
           <div className="fixed top-20 left-1/2 -translate-x-1/2 z-[300] bg-zinc-800 text-white px-4 py-2 rounded-full shadow-lg border border-yellow-500/50 flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
               <Clock className="w-4 h-4 text-yellow-400" />
-              <span className="text-sm font-medium text-yellow-100">{t('serverBusy')}</span>
+              <span className="text-sm font-medium text-yellow-100">{warningMsg || t('serverBusy')}</span>
           </div>
         )}
 

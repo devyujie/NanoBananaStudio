@@ -59,6 +59,7 @@ const translations: Record<Language, Record<string, string>> = {
     startEdit: "开始修改",
     editing: "修改中...",
     originalImage: "原图",
+    waitEditCompletion: "请等待修改图片完成。",
     
     // History
     historyTitle: "最近生成记录",
@@ -123,6 +124,7 @@ const translations: Record<Language, Record<string, string>> = {
     startEdit: "Start Modifying",
     editing: "Modifying...",
     originalImage: "Original",
+    waitEditCompletion: "Please wait for the image modification to complete.",
     
     // History
     historyTitle: "Recent History",
